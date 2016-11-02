@@ -6,7 +6,7 @@ import '../../core/analytics/utils';
 
 class AvAnalyticsController extends Base {
 
-  static $inject = ['avAnalyticsUtils', 'avAnalytics'];
+  static $inject = ['avAnalyticsUtils', 'avAnalytics', 'avPreLink'];
 
   constructor(...args){
     super(...args);
@@ -25,17 +25,9 @@ class AvAnalyticsController extends Base {
       options
     );
 
-    if (this.av.avAnalyticsUtils.isExternalLink(properties)) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
-
-    const promise = this.av.avAnalytics.trackEvent(properties);
-    promise.finally(() => {
-      if (this.av.avAnalyticsUtils.isExternalLink(properties)) {
-        document.location = element.attr('href');
-      }
-    });
+    this.av.avPreLink.runPromiseEvent(() => {
+      this.av.avAnalytics.trackEvent(properties);
+    }, event);
 
   }
 
