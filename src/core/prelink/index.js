@@ -17,17 +17,17 @@ const AvPreLinkFactory = () => {
       if (!this.navigatePromise) {
         this.startNavigator();
       }
-      return this.navigatePromise();
+      return this.navigatePromise;
     }
     startNavigator() {
       this.navigatePromise = Promise.resolve()
       .then(() => {
-        function runNext(linkObj) {
+        const runNext = (linkObj) => {
           const thisObj = _.head(this.navigators);
           if (thisObj) {
             return this.promiseMaybeFn(thisObj.fn)
             .then(() => {
-              this.navigators = _.tail(this.nalodavigators);
+              this.navigators = _.tail(this.navigators);
               return runNext(thisObj.linkObj);
             });
           }
@@ -35,7 +35,7 @@ const AvPreLinkFactory = () => {
             window.open(linkObj.href, linkObj.target);
           }
           return Promise.resolve();
-        }
+        };
         return runNext();
       })
       .then(() => {
@@ -65,7 +65,12 @@ const AvPreLinkFactory = () => {
         target
       };
       if (!this.toWaitLink(linkObj)) {
-        return this.promiseMaybeFn(fn);
+        return this.promiseMaybeFn(fn)
+        .then(() => {
+          if (linkObj && linkObj.href) {
+            window.open(linkObj.href, linkObj.target);
+          }
+        });
       }
       return this.runNavigator({
         fn,
