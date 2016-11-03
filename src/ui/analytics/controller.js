@@ -26,7 +26,7 @@ class AvAnalyticsController extends Base {
     );
 
     this.av.avPreLink.runPromiseEvent(() => {
-      this.av.avAnalytics.trackEvent(properties);
+      return this.av.avAnalytics.trackEvent(properties);
     }, event);
 
   }
